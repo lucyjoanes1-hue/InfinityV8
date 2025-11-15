@@ -448,9 +448,17 @@ def run():
 app = Flask(__name__)
 
 @app.route("/")
-def health():
-    return "Trading bot is running", 200
-    
+def home():
+    return "Infinity Deriv Bot is running!"
+
+@app.route("/trade", methods=["GET"])
+def trade_once():
+    try:
+        result = bot.run_single_trade()
+        return {"status": "success", "result": result}, 200
+    except Exception as e:
+        return {"status": "error", "message": str(e)}, 500
+        
 if __name__ == "__main__":
     # Start trading bot in a background thread
     threading.Thread(target=run, daemon=True).start()
