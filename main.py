@@ -22,6 +22,9 @@ from sklearn.isotonic import IsotonicRegression
 from hmmlearn import hmm
 from sklearn.decomposition import PCA
 import logging
+from flask import Flask
+import os
+import threading
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -441,5 +444,17 @@ def run():
     while True:
         time.sleep(1)
 
+    # Flask health endpoint for Render
+app = Flask(__name__)
+
+@app.route("/")
+def health():
+    return "Trading bot is running", 200
+    
 if __name__ == "__main__":
-    run()
+    # Start trading bot in a background thread
+    threading.Thread(target=run, daemon=True).start()
+
+    # Start Flask server to bind to Render port
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
