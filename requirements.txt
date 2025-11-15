@@ -12,3 +12,4 @@ hmmlearn
 optuna
 joblib
 rich
+Flask==2.3.3
